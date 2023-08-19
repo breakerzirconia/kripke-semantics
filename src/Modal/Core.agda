@@ -1,16 +1,14 @@
 module Modal.Core where
 
-open import Level
-open import Data.Nat
+open import Level using (Level)
 open import Data.Bool.Base renaming (_∧_ to _&&_; _∨_ to _||_)
-open import Data.Empty
-open import Data.List
-open import Data.Product
-open import Data.Sum
+open import Data.Empty using (⊥-elim)
+open import Data.List using (List)
+open import Data.Product using (_×_; _,_; ∃-syntax)
+open import Data.Sum using (_⊎_; inj₁; inj₂)
 open import Relation.Binary.Core hiding (_⇒_; _⇔_)
-open import Relation.Binary.Definitions
 open import Relation.Binary.PropositionalEquality
-open import Relation.Nullary.Negation
+open import Relation.Nullary.Negation using (¬_)
 
 infix 7 `¬_ □_ ◇_
 infixr 6 _∧_
@@ -70,20 +68,13 @@ _,_⊩_ : {W F : Set} → KripkeModel W F → W → modal F → Set
 non-contra : {W F : Set} → {𝔐 : KripkeModel W F} → {w : W} → {f : modal F} → 𝔐 , w ⊩ `¬ (f ∧ `¬ f)
 non-contra = λ{ (f , ¬f) → ¬f f }
 
-distribution : {W F : Set} → {𝔐 : KripkeModel W F} → {w : W} → {a b : modal F} → 𝔐 , w ⊩ □ (a ⇒ b) ⇒ (□ a ⇒ □ b)
-distribution a⇒b a v w↝v = a⇒b v w↝v (a v w↝v)
-
-K : {W F : Set} → {𝔐 : KripkeModel W F} → {r : Reflexive (KripkeModel.accesses 𝔐)} → {w : W} → {a : modal F} →
-    𝔐 , w ⊩ □ a ⇒ a
-K {r = r} {w = w} □a = □a w r
-
-¬⇒⇔∧¬ : {W F : Set} → {𝔐 : KripkeModel W F} → {w : W} → {f g : modal F} → 𝔐 , w ⊩ `¬ (f ⇒ g) ⇔ f ∧ `¬ g
-¬⇒⇔∧¬ {W} {F} {𝔐} {w} {f} {g} = => , <=
-  where
-    => : ¬ (𝔐 , w ⊩ f → 𝔐 , w ⊩ g) → (𝔐 , w ⊩ f) × ¬ (𝔐 , w ⊩ g)
-    => ¬f→g with LEM (𝔐 , w ⊩ f)
-    ... | inj₁ yes = yes , (λ ⊩g → ¬f→g λ _ → ⊩g)
-    ... | inj₂ no = {!!}
-    <= : (𝔐 , w ⊩ f) × ¬ (𝔐 , w ⊩ g) → ¬ (𝔐 , w ⊩ f → 𝔐 , w ⊩ g)
-    <= (⊩f , ¬⊩g) f→g = ¬⊩g (f→g ⊩f)
+-- ¬⇒⇔∧¬ : {W F : Set} → {𝔐 : KripkeModel W F} → {w : W} → {f g : modal F} → 𝔐 , w ⊩ `¬ (f ⇒ g) ⇔ f ∧ `¬ g
+-- ¬⇒⇔∧¬ {W} {F} {𝔐} {w} {f} {g} = => , <=
+--  where
+--    => : ¬ (𝔐 , w ⊩ f → 𝔐 , w ⊩ g) → (𝔐 , w ⊩ f) × ¬ (𝔐 , w ⊩ g)
+--    => ¬f→g with LEM (𝔐 , w ⊩ f)
+--    ... | inj₁ yes = yes , (λ ⊩g → ¬f→g λ _ → ⊩g)
+--    ... | inj₂ no = {!!}
+--    <= : (𝔐 , w ⊩ f) × ¬ (𝔐 , w ⊩ g) → ¬ (𝔐 , w ⊩ f → 𝔐 , w ⊩ g)
+--    <= (⊩f , ¬⊩g) f→g = ¬⊩g (f→g ⊩f)
 
