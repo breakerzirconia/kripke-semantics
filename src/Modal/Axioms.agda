@@ -2,7 +2,7 @@ module Modal.Axioms where
 
 open import Data.Bool hiding (T)
 open import Data.Empty using (⊥-elim)
-open import Data.Product using (_×_; _,_; ∃-syntax)
+open import Data.Product using (_,_; ∃-syntax)
 open import Relation.Binary.Definitions
 
 open import Modal.Core
@@ -50,11 +50,11 @@ B◇□ sym {w = w} (v , w↝v , □a) = □a w (sym w↝v)
 
 Five : Euclidean (KripkeModel.accesses 𝔐) → {w : W} → {a : modal F} →
        𝔐 , w ⊩ ◇ a ⇒ □ ◇ a
-Five euc (u , w↝u , a) v w↝v = u , euc w↝v w↝u , a
+Five euclidean (u , w↝u , a) v w↝v = u , euclidean w↝v w↝u , a
 
 G : Convergent (KripkeModel.accesses 𝔐) → {w : W} → {a : modal F} →
     𝔐 , w ⊩ ◇ □ a ⇒ □ ◇ a
-G con (u , w↝u , □a) v w↝v with con w↝v w↝u
+G convergent (u , w↝u , □a) v w↝v with convergent w↝v w↝u
 ... | t , v↝t , u↝t = t , v↝t , □a t u↝t
 
 -- This axiom is given a name 'N' in reference to null graphs, i.e. graphs that don't contain edges.
@@ -63,22 +63,24 @@ G con (u , w↝u , □a) v w↝v with con w↝v w↝u
 
 N : Discrete (KripkeModel.accesses 𝔐) → {w : W} → {a : modal F} →
     𝔐 , w ⊩ a ⇒ □ a
-N disc a v w↝v rewrite disc w↝v = a
+N discrete a v w↝v rewrite discrete w↝v = a
 
 -- This axiom is given a name 'P' in reference to partial functions.
 
 P : Partial (KripkeModel.accesses 𝔐) → {w : W} → {a : modal F} →
     𝔐 , w ⊩ ◇ a ⇒ □ a
-P part (u , w↝u , a) v w↝v rewrite part w↝v w↝u = a
+P partial (u , w↝u , a) v w↝v rewrite partial w↝v w↝u = a
 
--- This axiom is given a name 'One' in reference to total functions.
+-- This axiom is given a name '1' in reference to the uniqueness of the target for every
+-- source, as it is in total functions.
 
 One : Function (KripkeModel.accesses 𝔐) → {w : W} → {a : modal F} →
       𝔐 , w ⊩ □ a ⇔ ◇ a
-One (serial , part) = D serial , P part
+One (serial , partial) = D serial , P partial
 
--- This axiom is given a name 'Zero' in reference to the emptiness to the accessibility relation.
+-- This axiom is given a name '0' in reference to the emptiness to the accessibility relation.
 
 Zero : Empty (KripkeModel.accesses 𝔐) → {w : W} → {a : modal F} →
        𝔐 , w ⊩ □ a
 Zero empty {w = w} v w↝v = ⊥-elim (empty w v w↝v)
+
