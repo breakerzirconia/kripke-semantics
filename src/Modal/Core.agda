@@ -57,31 +57,28 @@ _,_⊩_ : {W F : Set} → KripkeModel W F → W → modal F → Set
 molecule : {F : Set} → F → modal (modal F)
 molecule f = atom (atom f)
 
-{-
-
 -----------------------------------------------------------------------
--- Simple valuation & Kripke Model
-
-simple-valuation : {W : Set} → REL W Bool _
-simple-valuation w = T
+-- The simple Kripke model from a given accessibility relation
 
 simple : {W : Set} → Rel W _ → KripkeModel W Bool
-simple rel = mkKM rel simple-valuation
+simple rel = mkKM rel λ w b → b
+
+{-
 
 -----------------------------------------------------------------------
 -- Classical valuation & Kripke model
 
-classical-valuation : {W : Set} → Rel W _ → REL W (modal Bool) _
-classical-valuation _R_ w (atom false) = ⊥
-classical-valuation _R_ w (atom true) = ⊤
-classical-valuation _R_ w (`¬ m) = ¬ (classical-valuation _R_ w m)
-classical-valuation _R_ w (lhs ∧ rhs) = classical-valuation _R_ w lhs × classical-valuation _R_ w rhs
-classical-valuation _R_ w (lhs ∨ rhs) = classical-valuation _R_ w lhs ⊎ classical-valuation _R_ w rhs
-classical-valuation _R_ w (lhs ⇒ rhs) = ¬ (classical-valuation _R_ w lhs) ⊎ classical-valuation _R_ w rhs
-classical-valuation _R_ w (lhs ⇔ rhs) = classical-valuation _R_ w lhs × classical-valuation _R_ w rhs ⊎
-                                        ¬ (classical-valuation _R_ w lhs) × ¬ (classical-valuation _R_ w rhs)
-classical-valuation _R_ w (□ m) = ∀ v → w R v → classical-valuation _R_ v m
-classical-valuation _R_ w (◇ m) = ∃[ v ] (w R v) × (classical-valuation _R_ v m)
+classical-valuation : {W : Set} → Rel W _ → W → modal Bool → Bool
+classical-valuation _R_ w (atom false) = false
+classical-valuation _R_ w (atom true) = true
+classical-valuation _R_ w (`¬ m) = not (classical-valuation _R_ w m)
+classical-valuation _R_ w (lhs ∧ rhs) = classical-valuation _R_ w lhs && classical-valuation _R_ w rhs
+classical-valuation _R_ w (lhs ∨ rhs) = classical-valuation _R_ w lhs || classical-valuation _R_ w rhs
+classical-valuation _R_ w (lhs ⇒ rhs) = not (classical-valuation _R_ w lhs) ⊎ classical-valuation _R_ w rhs
+classical-valuation _R_ w (lhs ⇔ rhs) = classical-valuation _R_ w lhs && classical-valuation _R_ w rhs ||
+                                        not (classical-valuation _R_ w lhs) && not (classical-valuation _R_ w rhs)
+classical-valuation _R_ w (□ m) = ? -- ∀ v → w R v → classical-valuation _R_ v m
+classical-valuation _R_ w (◇ m) = ? -- ∃[ v ] (w R v) × (classical-valuation _R_ v m)
 
 classical : {W : Set} → Rel W _ → KripkeModel W (modal Bool)
 classical rel = mkKM rel (classical-valuation rel)

@@ -1,8 +1,11 @@
 module Modal.Axioms where
 
+open import Agda.Builtin.Equality
 open import Data.Bool hiding (T)
+open import Data.Bool.Properties using (not-¬)
 open import Data.Empty using (⊥-elim)
 open import Data.Product using (_,_; ∃-syntax)
+open import Relation.Binary.Core hiding (_⇒_; _⇔_)
 open import Relation.Binary.Definitions
 
 open import Modal.Core
@@ -25,7 +28,7 @@ T rfl {w = w} □a = □a w rfl
 Q : Dense (KripkeModel.accesses 𝔐) → {w : W} → {a : modal F} →
     𝔐 , w ⊩ □ □ a ⇒ □ a
 Q dense □□a v w↝v with dense w↝v
-... | u , (w↝u , u↝v) = □□a u w↝u v u↝v
+... | u , w↝u , u↝v = □□a u w↝u v u↝v
 
 Four : Transitive (KripkeModel.accesses 𝔐) → {w : W} → {a : modal F} →
        𝔐 , w ⊩ □ a ⇒ □ □ a
@@ -36,9 +39,15 @@ D : Serial (KripkeModel.accesses 𝔐) → {w : W} → {a : modal F} →
 D serial {w = w} □a with serial w
 ... | v , w↝v = v , w↝v , (□a v w↝v)
 
--- D⊤ : {W : Set} → {𝔐 : KripkeModel W Bool} → {serial : Serial (KripkeModel.accesses 𝔐)} → {w : W} → {a : modal Bool} →
---     𝔐 , w ⊩ ◇ (atom true)
--- D⊤ = {!!}
+D◇⊤ : {rel : Rel W _} → Serial rel → {w : W} →
+     simple rel , w ⊩ ◇ (atom true)
+D◇⊤ serial {w = w} with serial w
+... | v , w↝v = v , w↝v , refl
+
+D¬□⊥ : {rel : Rel W _} → Serial rel → {w : W} →
+     simple rel , w ⊩ `¬ □ (atom false)
+D¬□⊥ serial {w = w} f with serial w
+... | v , w↝v = not-¬ (f v w↝v) refl
 
 B□◇ : Symmetric (KripkeModel.accesses 𝔐) → {w : W} → {a : modal F} →
       𝔐 , w ⊩ a ⇒ □ ◇ a
