@@ -21,4 +21,4 @@ Peirce : (a b : Set ℓ) → ((a → b) → a) → a
 Peirce a b aba = DNE a λ na → na (aba λ x → ⊥-elim (na x))
 
 Reductio : (a b : Set ℓ) → (¬ b → ¬ a) → (a → b)
-Reductio a b ¬b→¬a x = DNE _ (contraposition ¬b→¬a (⊥-intro x))
+Reductio a b ¬b→¬a x = DNE _ (contraposition ¬b→¬a (DNI _ x))

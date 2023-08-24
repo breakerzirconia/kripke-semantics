@@ -1,16 +1,15 @@
 module Modal.Core where
 
 open import Agda.Builtin.Equality using (_≡_)
-open import Agda.Builtin.Unit using (⊤)
 open import Data.Bool.Base renaming (_∧_ to _&&_; _∨_ to _||_)
-open import Data.Empty using (⊥)
-open import Data.List using (List)
-open import Data.Product using (_×_; _,_; ∃-syntax)
+open import Data.Empty using (⊥-elim)
+open import Data.Product using (_×_; ∃-syntax)
 open import Data.Sum using (_⊎_)
 open import Relation.Binary.Core hiding (_⇒_; _⇔_)
 open import Relation.Nullary.Negation using (¬_)
 
-open import Extras
+-----------------------------------------------------------------------
+-- The 'modal' datatype
 
 infix 7 `¬_ □_ ◇_
 infixr 6 _∧_
@@ -20,16 +19,24 @@ infixr 3 _⇔_
 
 data modal (a : Set) : Set where
   atom : a → modal a
-  `¬_   : modal a → modal a
-  _∧_  : modal a → modal a → modal a
-  _∨_  : modal a → modal a → modal a
+  `¬_  : modal a → modal a
   _⇒_  : modal a → modal a → modal a
-  _⇔_  : modal a → modal a → modal a
   □_   : modal a → modal a
-  ◇_   : modal a → modal a
 
-_ : modal Bool
-_ = `¬ □ ◇ (atom true ∧ atom false)
+_∧_  : {a : Set} → modal a → modal a → modal a
+a ∧ b = `¬ (a ⇒ `¬ b)
+
+_∨_  : {a : Set} → modal a → modal a → modal a
+a ∨ b = `¬ a ⇒ b
+
+_⇔_  : {a : Set} → modal a → modal a → modal a
+a ⇔ b = (a ⇒ b) ∧ (b ⇒ a)
+
+◇_   : {a : Set} → modal a → modal a
+◇ a = `¬ □ `¬ a
+
+-----------------------------------------------------------------------
+-- Kripke frame, Kripke model, and Kripke semantics for modal logic
 
 record KripkeFrame (W : Set) : Set₁ where
   constructor mkKF
@@ -46,22 +53,9 @@ infix 2 _,_⊩_
 
 _,_⊩_ : {W F : Set} → KripkeModel W F → W → modal F → Set
 𝔐 , w ⊩ atom x = KripkeModel.valuation 𝔐 w x ≡ true
-𝔐 , w ⊩ `¬ f = ¬ (𝔐 , w ⊩ f)
-𝔐 , w ⊩ f ∧ g = ¬ ((𝔐 , w ⊩ f) → ¬ (𝔐 , w ⊩ g))
-𝔐 , w ⊩ f ∨ g = ¬ (𝔐 , w ⊩ f) → (𝔐 , w ⊩ g)
-𝔐 , w ⊩ f ⇒ g = (𝔐 , w ⊩ f) → (𝔐 , w ⊩ g)
-𝔐 , w ⊩ f ⇔ g = ((𝔐 , w ⊩ f) ↔ (𝔐 , w ⊩ g))
-𝔐 , w ⊩ □ f = ∀ v → KripkeModel.accesses 𝔐 w v → 𝔐 , v ⊩ f
-𝔐 , w ⊩ ◇ f = ∃[ v ] (KripkeModel.accesses 𝔐 w v) × (𝔐 , v ⊩ f)
-
-molecule : {F : Set} → F → modal (modal F)
-molecule f = atom (atom f)
-
------------------------------------------------------------------------
--- The simple Kripke model from a given accessibility relation
-
-simple : {W : Set} → Rel W _ → KripkeModel W Bool
-simple rel = mkKM rel λ w b → b
+𝔐 , w ⊩ `¬ f   = ¬ (𝔐 , w ⊩ f)
+𝔐 , w ⊩ f ⇒ g  = (𝔐 , w ⊩ f) → (𝔐 , w ⊩ g)
+𝔐 , w ⊩ □ f    = ∀ v → KripkeModel.accesses 𝔐 w v → 𝔐 , v ⊩ f
 
 {-
 

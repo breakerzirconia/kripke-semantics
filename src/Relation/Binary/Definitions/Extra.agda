@@ -5,6 +5,7 @@ open import Data.Product using (_×_; ∃-syntax)
 open import Data.Sum using (_⊎_)
 open import Level using (Level)
 open import Relation.Binary.Core using (Rel)
+open import Relation.Binary.Definitions using (Reflexive)
 open import Relation.Nullary.Negation using (¬_)
 
 private
@@ -41,3 +42,9 @@ Function _R_ = Serial _R_ × Partial _R_
 
 Empty : Rel A ℓ → Set _
 Empty _R_ = ∀ x y → ¬ (x R y)
+
+-- This property is given a name 'Skeletal' in reference to skeletal categories.
+-- Name subject to change.
+
+Skeletal : Rel A ℓ → Set _
+Skeletal _R_ = Reflexive _R_ × Discrete _R_
