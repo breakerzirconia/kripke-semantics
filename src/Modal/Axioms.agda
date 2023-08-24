@@ -60,7 +60,7 @@ B◇□ {𝔐 = 𝔐} sym {w = w} {a = a} d with ⊩◇→ 𝔐 (□ a) d
 
 Five : Euclidean (KripkeModel.accesses 𝔐) → {w : W} → {a : modal F} →
        𝔐 , w ⊩ ◇ a ⇒ □ ◇ a
-Five {𝔐 = 𝔐} euclidean ◇ v w↝v with ⊩◇→ 𝔐 _ ◇
+Five {𝔐 = 𝔐} euclidean d v w↝v with ⊩◇→ 𝔐 _ d
 ... | (u , w↝u , a) = ⊩◇← 𝔐 _ (u , euclidean w↝v w↝u , a)
 
 G : Convergent (KripkeModel.accesses 𝔐) → {w : W} → {a : modal F} →

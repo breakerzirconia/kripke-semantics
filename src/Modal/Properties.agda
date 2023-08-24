@@ -20,14 +20,14 @@ variable
 ------------------------------------------------------------------------
 -- Axioms of the CN-logic
 
-ax-K : {a b : modal F} → 𝔐 , w ⊩ a ⇒ b ⇒ a
-ax-K ⊩a ⊩b = ⊩a
+⊩K : {a b : modal F} → 𝔐 , w ⊩ a ⇒ b ⇒ a
+⊩K ⊩a ⊩b = ⊩a
 
-ax-S : {a b c : modal F} → 𝔐 , w ⊩ (a ⇒ b ⇒ c) ⇒ (a ⇒ b) ⇒ (a ⇒ c)
-ax-S f g ⊩a = f ⊩a (g ⊩a)
+⊩S : {a b c : modal F} → 𝔐 , w ⊩ (a ⇒ b ⇒ c) ⇒ (a ⇒ b) ⇒ (a ⇒ c)
+⊩S f g ⊩a = f ⊩a (g ⊩a)
 
-ax-reductio : {a b : modal F} → 𝔐 , w ⊩ (`¬ b ⇒ `¬ a) ⇒ (a ⇒ b)
-ax-reductio = Reductio _ _
+⊩reductio : {a b : modal F} → 𝔐 , w ⊩ (`¬ b ⇒ `¬ a) ⇒ (a ⇒ b)
+⊩reductio = Reductio _ _
 
 MP : {w : W} → {a b : modal F} →
      𝔐 , w ⊩ a ⇒ b → 𝔐 , w ⊩ a → 𝔐 , w ⊩ b
@@ -36,52 +36,56 @@ MP ⊩a→b ⊩a = ⊩a→b ⊩a
 ------------------------------------------------------------------------
 -- Axioms of constructive logic
 
-ax-∧-intro : {a b : modal F} → 𝔐 , w ⊩ a ⇒ b ⇒ a ∧ b
-ax-∧-intro ⊩a ⊩b f = f ⊩a ⊩b
+⊩∧-intro : {a b : modal F} → 𝔐 , w ⊩ a ⇒ b ⇒ a ∧ b
+⊩∧-intro ⊩a ⊩b f = f ⊩a ⊩b
 
-ax-∧-elimˡ : {a b : modal F} → 𝔐 , w ⊩ a ∧ b ⇒ a
-ax-∧-elimˡ f = DNE _ λ ⊩¬a → f λ ⊩a ⊩b → ⊩¬a ⊩a
+⊩∧-elimˡ : {a b : modal F} → 𝔐 , w ⊩ a ∧ b ⇒ a
+⊩∧-elimˡ f = DNE _ λ ⊩¬a → f λ ⊩a ⊩b → ⊩¬a ⊩a
 
-ax-∧-elimʳ : {a b : modal F} → 𝔐 , w ⊩ a ∧ b ⇒ b
-ax-∧-elimʳ f = DNE _ λ ⊩¬b → f λ ⊩a ⊩b → ⊩¬b ⊩b
+⊩∧-elimʳ : {a b : modal F} → 𝔐 , w ⊩ a ∧ b ⇒ b
+⊩∧-elimʳ f = DNE _ λ ⊩¬b → f λ ⊩a ⊩b → ⊩¬b ⊩b
 
-ax-∨-introˡ : {a b : modal F} → 𝔐 , w ⊩ a ⇒ a ∨ b
-ax-∨-introˡ ⊩a ⊩¬a = ⊥-elim (⊩¬a ⊩a)
+⊩∨-introˡ : {a b : modal F} → 𝔐 , w ⊩ a ⇒ a ∨ b
+⊩∨-introˡ ⊩a ⊩¬a = ⊥-elim (⊩¬a ⊩a)
 
-ax-∨-introʳ : {a b : modal F} → 𝔐 , w ⊩ b ⇒ a ∨ b
-ax-∨-introʳ ⊩b ⊩¬a = ⊩b
+⊩∨-introʳ : {a b : modal F} → 𝔐 , w ⊩ b ⇒ a ∨ b
+⊩∨-introʳ ⊩b ⊩¬a = ⊩b
 
-ax-∨-elim : {a b c : modal F} → 𝔐 , w ⊩ (a ⇒ c) ⇒ (b ⇒ c) ⇒ (a ∨ b ⇒ c)
-ax-∨-elim {𝔐 = 𝔐} {w = w} {a = a} f g ¬a→b with LEM (𝔐 , w ⊩ a)
+⊩∨-elim : {a b c : modal F} → 𝔐 , w ⊩ (a ⇒ c) ⇒ (b ⇒ c) ⇒ (a ∨ b ⇒ c)
+⊩∨-elim {𝔐 = 𝔐} {w = w} {a = a} f g ¬a→b with LEM (𝔐 , w ⊩ a)
 ... | inj₁ ⊩a = f ⊩a
 ... | inj₂ ⊩¬a = g (¬a→b ⊩¬a)
 
-ax-¬-intro : {a b c : modal F} → 𝔐 , w ⊩ (a ⇒ b) ⇒ (a ⇒ `¬ b) ⇒ `¬ a
-ax-¬-intro f fn ⊩a = fn ⊩a (f ⊩a)
+⊩¬-intro : {a b c : modal F} → 𝔐 , w ⊩ (a ⇒ b) ⇒ (a ⇒ `¬ b) ⇒ `¬ a
+⊩¬-intro f fn ⊩a = fn ⊩a (f ⊩a)
 
-ax-¬-elim : {a b : modal F} → 𝔐 , w ⊩ a ⇒ `¬ a ⇒ b
-ax-¬-elim ⊩a ⊩¬a = ⊥-elim (⊩¬a ⊩a)
+⊩¬-elim : {a b : modal F} → 𝔐 , w ⊩ a ⇒ `¬ a ⇒ b
+⊩¬-elim ⊩a ⊩¬a = ⊥-elim (⊩¬a ⊩a)
 
 ------------------------------------------------------------------------
 -- Classical axioms
 
-ax-LEM : {a : modal F} → 𝔐 , w ⊩ a ∨ `¬ a
-ax-LEM ⊩¬a = ⊩¬a
+⊩LEM : {a : modal F} → 𝔐 , w ⊩ a ∨ `¬ a
+⊩LEM ⊩¬a = ⊩¬a
 
-ax-DNE : {a : modal F} → 𝔐 , w ⊩ `¬ `¬ a ⇒ a
-ax-DNE = DNE _
+⊩DNE : {a : modal F} → 𝔐 , w ⊩ `¬ `¬ a ⇒ a
+⊩DNE = DNE _
+
+⊩Peirce : {a b : modal F} → 𝔐 , w ⊩ ((a ⇒ b) ⇒ a) ⇒ a
+⊩Peirce = Peirce _ _
 
 ------------------------------------------------------------------------
 -- Axioms from the BCKW system, but without K
 
-ax-flip : {a b c : modal F} → 𝔐 , w ⊩ (a ⇒ b ⇒ c) ⇒ (b ⇒ a ⇒ c)
-ax-flip f ⊩b ⊩a = f ⊩a ⊩b
+⊩flip : {a b c : modal F} → 𝔐 , w ⊩ (a ⇒ b ⇒ c) ⇒ (b ⇒ a ⇒ c)
+⊩flip f ⊩b ⊩a = f ⊩a ⊩b
 
-ax-composition : {a b c : modal F} → 𝔐 , w ⊩ (b ⇒ c) ⇒ (a ⇒ b) ⇒ (a ⇒ c)
-ax-composition g f ⊩a = g (f ⊩a)
+infixr 9 _⊩∘_
+_⊩∘_ : {a b c : modal F} → 𝔐 , w ⊩ (b ⇒ c) ⇒ (a ⇒ b) ⇒ (a ⇒ c)
+_⊩∘_ g f ⊩a = g (f ⊩a)
 
-ax-join : {a b : modal F} → 𝔐 , w ⊩ (a ⇒ a ⇒ b) ⇒ (a ⇒ b)
-ax-join f ⊩a = f ⊩a ⊩a
+⊩join : {a b : modal F} → 𝔐 , w ⊩ (a ⇒ a ⇒ b) ⇒ (a ⇒ b)
+⊩join f ⊩a = f ⊩a ⊩a
 
 ------------------------------------------------------------------------
 -- Duality of necessity and possibility.
@@ -153,4 +157,4 @@ quasi-regular (rfl , discrete) a→b □a v w↝v rewrite discrete w↝v = a→b
 
 ⇒◇ : Reflexive (KripkeModel.accesses 𝔐) → {w : W} → {a : modal F} →
      𝔐 , w ⊩ a ⇒ ◇ a
-⇒◇ {𝔐 = 𝔪} rfl {w = w} {a = a} ⊩a = ⊩◇← 𝔪 a (w , rfl , ⊩a)
+⇒◇ {𝔐 = 𝔐} rfl {w = w} {a = a} ⊩a = ⊩◇← 𝔐 a (w , rfl , ⊩a)
