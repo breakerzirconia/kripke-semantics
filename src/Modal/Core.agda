@@ -47,8 +47,8 @@ infix 2 _,_⊩_
 _,_⊩_ : {W F : Set} → KripkeModel W F → W → modal F → Set
 𝔐 , w ⊩ atom x = KripkeModel.valuation 𝔐 w x ≡ true
 𝔐 , w ⊩ `¬ f = ¬ (𝔐 , w ⊩ f)
-𝔐 , w ⊩ f ∧ g = (𝔐 , w ⊩ f) × (𝔐 , w ⊩ g)
-𝔐 , w ⊩ f ∨ g = (𝔐 , w ⊩ f) ⊎ (𝔐 , w ⊩ g)
+𝔐 , w ⊩ f ∧ g = ¬ ((𝔐 , w ⊩ f) → ¬ (𝔐 , w ⊩ g))
+𝔐 , w ⊩ f ∨ g = ¬ (𝔐 , w ⊩ f) → (𝔐 , w ⊩ g)
 𝔐 , w ⊩ f ⇒ g = (𝔐 , w ⊩ f) → (𝔐 , w ⊩ g)
 𝔐 , w ⊩ f ⇔ g = ((𝔐 , w ⊩ f) ↔ (𝔐 , w ⊩ g))
 𝔐 , w ⊩ □ f = ∀ v → KripkeModel.accesses 𝔐 w v → 𝔐 , v ⊩ f

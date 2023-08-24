@@ -17,7 +17,7 @@ variable
   w : W
 
 ------------------------------------------------------------------------
--- Axioms of constructive logic
+-- Axioms of the CN-logic
 
 ax-K : {a b : modal F} → 𝔐 , w ⊩ a ⇒ b ⇒ a
 ax-K ⊩a ⊩b = ⊩a
@@ -25,24 +25,31 @@ ax-K ⊩a ⊩b = ⊩a
 ax-S : {a b c : modal F} → 𝔐 , w ⊩ (a ⇒ b ⇒ c) ⇒ (a ⇒ b) ⇒ (a ⇒ c)
 ax-S f g ⊩a = f ⊩a (g ⊩a)
 
+ax-reductio : {a b : modal F} → 𝔐 , w ⊩ (`¬ b ⇒ `¬ a) ⇒ (a ⇒ b)
+ax-reductio = Reductio _ _
+
+------------------------------------------------------------------------
+-- Axioms of constructive logic
+
 ax-∧-intro : {a b : modal F} → 𝔐 , w ⊩ a ⇒ b ⇒ a ∧ b
-ax-∧-intro ⊩a ⊩b = ⊩a , ⊩b
+ax-∧-intro ⊩a ⊩b f = f ⊩a ⊩b
 
 ax-∧-elimˡ : {a b : modal F} → 𝔐 , w ⊩ a ∧ b ⇒ a
-ax-∧-elimˡ (⊩a , ⊩b) = ⊩a
+ax-∧-elimˡ f = DNE _ λ ⊩¬a → f λ ⊩a ⊩b → ⊩¬a ⊩a
 
 ax-∧-elimʳ : {a b : modal F} → 𝔐 , w ⊩ a ∧ b ⇒ b
-ax-∧-elimʳ (⊩a , ⊩b) = ⊩b
+ax-∧-elimʳ f = DNE _ λ ⊩¬b → f λ ⊩a ⊩b → ⊩¬b ⊩b
 
 ax-∨-introˡ : {a b : modal F} → 𝔐 , w ⊩ a ⇒ a ∨ b
-ax-∨-introˡ a = inj₁ a
+ax-∨-introˡ ⊩a ⊩¬a = ⊥-elim (⊩¬a ⊩a)
 
 ax-∨-introʳ : {a b : modal F} → 𝔐 , w ⊩ b ⇒ a ∨ b
-ax-∨-introʳ a = inj₂ a
+ax-∨-introʳ ⊩b ⊩¬a = ⊩b
 
 ax-∨-elim : {a b c : modal F} → 𝔐 , w ⊩ (a ⇒ c) ⇒ (b ⇒ c) ⇒ (a ∨ b ⇒ c)
-ax-∨-elim f g (inj₁ ⊩a) = f ⊩a
-ax-∨-elim f g (inj₂ ⊩b) = g ⊩b
+ax-∨-elim {𝔐 = 𝔐} {w = w} {a = a} f g ¬a→b with LEM (𝔐 , w ⊩ a)
+... | inj₁ ⊩a = f ⊩a
+... | inj₂ ⊩¬a = g (¬a→b ⊩¬a)
 
 ax-¬-intro : {a b c : modal F} → 𝔐 , w ⊩ (a ⇒ b) ⇒ (a ⇒ `¬ b) ⇒ `¬ a
 ax-¬-intro f fn ⊩a = fn ⊩a (f ⊩a)
@@ -51,10 +58,13 @@ ax-¬-elim : {a b : modal F} → 𝔐 , w ⊩ a ⇒ `¬ a ⇒ b
 ax-¬-elim ⊩a ⊩¬a = ⊥-elim (⊩¬a ⊩a)
 
 ------------------------------------------------------------------------
--- Double negation elimination
+-- Classical axioms
+
+ax-LEM : {a : modal F} → 𝔐 , w ⊩ a ∨ `¬ a
+ax-LEM ⊩¬a = ⊩¬a
 
 ax-DNE : {a : modal F} → 𝔐 , w ⊩ `¬ `¬ a ⇒ a
-ax-DNE ⊩¬¬a = DNE _ ⊩¬¬a
+ax-DNE = DNE _
 
 ------------------------------------------------------------------------
 -- Axioms from the BCKW system, but without K
@@ -107,17 +117,10 @@ ax-join f ⊩a = f ⊩a ⊩a
 -- Other properties w/o modalities
 
 non-contradiction : {a : modal F} → 𝔐 , w ⊩ `¬ (a ∧ `¬ a)
-non-contradiction (⊩a , ⊩¬a) = ⊩¬a ⊩a
-
-ax-LEM : {a : modal F} → 𝔐 , w ⊩ a ∨ `¬ a
-ax-LEM = LEM _
+non-contradiction = ⊥-intro λ ⊩a ⊩¬a → ⊩¬a ⊩a
 
 contraposition : {a b : modal F} → 𝔐 , w ⊩ (a ⇒ b) ⇒ (`¬ b ⇒ `¬ a)
 contraposition ⊩a→b ⊩¬b ⊩a = ⊩¬b (⊩a→b ⊩a)
-
-by-contradiction : {a b : modal F} → 𝔐 , w ⊩ (`¬ b ⇒ `¬ a) ⇒ (a ⇒ b)
-by-contradiction {a = a} {b = b} f ⊩a with contraposition {_} {_} {_} {_} {`¬ b} {`¬ a} f
-... | ~f = DNE _ (~f (⊥-intro ⊩a))
 
 -----------------------------------------------------------------------
 -- Other properties w/ modalities
@@ -135,12 +138,3 @@ by-contradiction {a = a} {b = b} f ⊩a with contraposition {_} {_} {_} {_} {`¬
 ◇◇⇒◇ (inj₁ trans) (v , w↝v , u , v↝u , ⊩a) = u , trans w↝v v↝u , ⊩a
 ◇◇⇒◇ (inj₂ (discrete , rfl)) (v , w↝v , u , v↝u , ⊩a) rewrite discrete w↝v | discrete v↝u = u , rfl , ⊩a
 
--- ¬⇒⇔∧¬ : {W F : Set} → {𝔐 : KripkeModel W F} → {w : W} → {f g : modal F} → 𝔐 , w ⊩ `¬ (f ⇒ g) ⇔ f ∧ `¬ g
--- ¬⇒⇔∧¬ {W} {F} {𝔐} {w} {f} {g} = => , <=
---  where
---    => : ¬ (𝔐 , w ⊩ f → 𝔐 , w ⊩ g) → (𝔐 , w ⊩ f) × ¬ (𝔐 , w ⊩ g)
---    => ¬f→g with LEM (𝔐 , w ⊩ f)
---    ... | inj₁ yes = yes , (λ ⊩g → ¬f→g λ _ → ⊩g)
---    ... | inj₂ no = {!!}
---    <= : (𝔐 , w ⊩ f) × ¬ (𝔐 , w ⊩ g) → ¬ (𝔐 , w ⊩ f → 𝔐 , w ⊩ g)
---    <= (⊩f , ¬⊩g) f→g = ¬⊩g (f→g ⊩f)
