@@ -3,7 +3,7 @@ module Modal.Properties where
 open import Data.Empty using (⊥-elim)
 open import Data.Product using (_×_; _,_)
 open import Data.Sum using (_⊎_; inj₁; inj₂)
-open import Function.Base using (id)
+open import Function.Base using (id; _∘₂_)
 open import Relation.Binary.Definitions
 open import Relation.Nullary.Negation using (¬_; ¬∃⟶∀¬)
 
@@ -114,14 +114,57 @@ _⊩∘_ g f ⊩a = g (f ⊩a)
   , DNI _
   )
 
+-----------------------------------------------------------------------
+-- Distribution of necessity over conjunction.
+
+□-distrib-∧⃗ : {w : W} → {a b : modal F} →
+               𝔐 , w ⊩ □ (a ∧ b) ⇒ □ a ∧ □ b
+□-distrib-∧⃗ {𝔐 = 𝔐} {a = a} {b = b} □∧ = ⊩∧← 𝔐 (□ a) (□ b) (⊩∧-elimˡ ∘₂ □∧ , ⊩∧-elimʳ ∘₂ □∧)
+
+□-distrib-∧⃖ : {w : W} → {a b : modal F} →
+               𝔐 , w ⊩ □ a ∧ □ b ⇒ □ (a ∧ b)
+□-distrib-∧⃖ {𝔐 = 𝔐} {w} {a} {b} □∧□ v w↝v with ⊩∧→ 𝔐 (□ a) (□ b) □∧□
+... | □a , □b = ⊩∧← 𝔐 a b ((□a v w↝v) , (□b v w↝v))
+
+□-distrib-∧ : {w : W} → {a b : modal F} →
+              𝔐 , w ⊩ □ (a ∧ b) ⇔ □ a ∧ □ b
+□-distrib-∧ {𝔐 = 𝔐} {a = a} {b = b} = ⊩⇔← 𝔐 (□ (a ∧ b)) (□ a ∧ □ b) (□-distrib-∧⃗ , □-distrib-∧⃖)
+
+------------------------------------------------------------------------
+-- Distribution of possibility over disjunction.
+
+◇-distrib-∨⃗ : {w : W} → {a b : modal F} →
+               𝔐 , w ⊩ ◇ (a ∨ b) ⇒ ◇ a ∨ ◇ b
+◇-distrib-∨⃗ {𝔐 = 𝔐} {a = a} {b = b} ◇∨ with ⊩◇→ 𝔐 (a ∨ b) ◇∨
+... | v , w↝v , ⊩a∨b with ⊩∨→ 𝔐 a b ⊩a∨b
+... | inj₁ ⊩a = ⊩∨← 𝔐 (◇ a) (◇ b) (inj₁ (⊩◇← 𝔐 a (v , w↝v , ⊩a)))
+... | inj₂ ⊩b = ⊩∨← 𝔐 (◇ a) (◇ b) (inj₂ (⊩◇← 𝔐 b (v , w↝v , ⊩b)))
+
+◇-distrib-∨⃖ : {w : W} → {a b : modal F} →
+               𝔐 , w ⊩ ◇ a ∨ ◇ b ⇒ ◇ (a ∨ b)
+◇-distrib-∨⃖ {𝔐 = 𝔐} {a = a} {b = b} ◇∨◇ with ⊩∨→ 𝔐 (◇ a) (◇ b) ◇∨◇
+◇-distrib-∨⃖ {𝔐 = 𝔐} {a = a} {b = b} ◇∨◇ | inj₁ ◇a with ⊩◇→ 𝔐 a ◇a
+... | v , w↝v , ⊩a = ⊩◇← 𝔐 (a ∨ b) (v , w↝v , ⊩∨← 𝔐 a b (inj₁ ⊩a))
+◇-distrib-∨⃖ {𝔐 = 𝔐} {a = a} {b = b} ◇∨◇ | inj₂ ◇b with ⊩◇→ 𝔐 b ◇b
+... | v , w↝v , ⊩b = ⊩◇← 𝔐 (a ∨ b) (v , w↝v , ⊩∨← 𝔐 a b (inj₂ ⊩b))
+
+◇-distrib-∨ : {w : W} → {a b : modal F} →
+              𝔐 , w ⊩ ◇ (a ∨ b) ⇔ ◇ a ∨ ◇ b
+◇-distrib-∨ {𝔐 = 𝔐} {a = a} {b = b} = ⊩⇔← 𝔐 (◇ (a ∨ b)) (◇ a ∨ ◇ b) (◇-distrib-∨⃗ , ◇-distrib-∨⃖)
+
+------------------------------------------------------------------------
+-- Distributing necessity over implication can flip the modality.
+
+□-flip-→ : {w : W} → {a b : modal F} →
+           𝔐 , w ⊩ □ (a ⇒ b) ⇒ (◇ a ⇒ ◇ b)
+□-flip-→ {𝔐 = 𝔐} {a = a} {b = b} ⊩□a⇒b ⊩◇a with ⊩◇→ 𝔐 a ⊩◇a
+... | v , w↝v , ⊩a = ⊩◇← 𝔐 b (v , w↝v , ⊩□a⇒b v w↝v ⊩a)
+
 ------------------------------------------------------------------------
 -- Other properties w/o modalities
 
 non-contradiction : {a : modal F} → 𝔐 , w ⊩ `¬ (a ∧ `¬ a)
 non-contradiction = DNI _ λ ⊩a ⊩¬a → ⊩¬a ⊩a
-
-contraposition : {a b : modal F} → 𝔐 , w ⊩ (a ⇒ b) ⇒ (`¬ b ⇒ `¬ a)
-contraposition ⊩a→b ⊩¬b ⊩a = ⊩¬b (⊩a→b ⊩a)
 
 -----------------------------------------------------------------------
 -- Other properties w/ modalities
@@ -146,9 +189,14 @@ contraposition ⊩a→b ⊩¬b ⊩a = ⊩¬b (⊩a→b ⊩a)
 ... | v , w↝v , d with ⊩◇→ 𝔐 a d
 ... | u , v↝u , ⊩a rewrite discrete w↝v | discrete v↝u = ⊩◇← 𝔐 a (u , rfl , ⊩a)
 
-quasi-regular : Skeletal (KripkeModel.accesses 𝔐) → {w : W} → {a b : modal F} →
-                𝔐 , w ⊩ a ⇒ b → 𝔐 , w ⊩ □ a ⇒ □ b
-quasi-regular (rfl , discrete) a→b □a v w↝v rewrite discrete w↝v = a→b (□a v rfl)
+quasi-regular-□ : Skeletal (KripkeModel.accesses 𝔐) → {w : W} → {a b : modal F} →
+                  𝔐 , w ⊩ a ⇒ b → 𝔐 , w ⊩ □ a ⇒ □ b
+quasi-regular-□ (rfl , discrete) ⊩a⇒b □a v w↝v rewrite discrete w↝v = ⊩a⇒b (□a v rfl)
+
+quasi-regular-◇ : Skeletal (KripkeModel.accesses 𝔐) → {w : W} → {a b : modal F} →
+                  𝔐 , w ⊩ a ⇒ b → 𝔐 , w ⊩ ◇ a ⇒ ◇ b
+quasi-regular-◇ {𝔐 = 𝔐} (rfl , discrete) {a = a} {b = b} ⊩a⇒b ◇a with ⊩◇→ 𝔐 a ◇a
+... | v , w↝v , ⊩a rewrite discrete w↝v = ⊩◇← 𝔐 b (v , rfl , ⊩a⇒b ⊩a)
 
 ◇⇒ : Discrete (KripkeModel.accesses 𝔐) → {w : W} → {a : modal F} →
      𝔐 , w ⊩ ◇ a ⇒ a
