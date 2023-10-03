@@ -9,6 +9,7 @@ open import Relation.Nullary.Negation using (¬_; ¬∃⟶∀¬)
 
 open import Classical
 open import Extras
+open import Kripke.Semantics
 open import Modal.Base
 open import Relation.Binary.Definitions.Extra
 

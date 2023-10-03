@@ -8,6 +8,7 @@ open import Data.Product using (_,_; ∃-syntax)
 open import Relation.Binary.Core hiding (_⇒_; _⇔_)
 open import Relation.Binary.Definitions
 
+open import Kripke.Semantics
 open import Modal.Base
 open import Relation.Binary.Definitions.Extra
 

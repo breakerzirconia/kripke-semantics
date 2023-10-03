@@ -12,6 +12,7 @@ open import Relation.Nullary.Negation using (¬_)
 open import Classical
 open import Classical.Properties
 open import Extras
+open import Kripke.Semantics
 
 -----------------------------------------------------------------------
 -- Re-exporting the core definitions.

@@ -8,6 +8,8 @@ open import Data.Sum using (_⊎_)
 open import Relation.Binary.Core hiding (_⇒_; _⇔_)
 open import Relation.Nullary.Negation using (¬_)
 
+open import Kripke.Semantics
+
 -----------------------------------------------------------------------
 -- The 'modal' datatype
 
@@ -36,18 +38,7 @@ a ⇔ b = (a ⇒ b) ∧ (b ⇒ a)
 ◇ a = `¬ □ `¬ a
 
 -----------------------------------------------------------------------
--- Kripke frame, Kripke model, and Kripke semantics for modal logic
-
-record KripkeFrame (W : Set) : Set₁ where
-  constructor mkKF
-  field
-    accesses : Rel W _
-
-record KripkeModel (W : Set) (F : Set) : Set₁ where
-  constructor mkKM
-  field
-    accesses : Rel W _
-    valuation : W → F → Bool
+-- Kripke semantics for modal logic
 
 infix 2 _,_⊩_
 

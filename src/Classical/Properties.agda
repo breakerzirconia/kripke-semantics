@@ -61,4 +61,3 @@ module _ {P : Pred A p} where
 
   ¬∀⟶∃¬ : ¬ (∀ x → P x) → ∃ λ x → ¬ P x
   ¬∀⟶∃¬ = Reductio _ _ (λ ¬∃¬ → DNI _ (¬∃¬⟶∀ ¬∃¬))
-

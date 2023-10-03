@@ -37,4 +37,3 @@ a ↔ b = (a → b) × (b → a)
 
 DNI : (a : Set ℓ) → a → ¬ ¬ a
 DNI a x ¬x = ¬x x
-
