@@ -19,7 +19,7 @@ _↔_ : Set ℓ → Set ℓ → Set ℓ
 a ↔ b = (a → b) × (b → a)
 
 ------------------------------------------------------------------------
--- 3 out of 4 De Morgan laws are provable in constructive logic
+-- 3 out of 4 De Morgan laws are provable in intuitionistic logic
 
 ¬⊎¬→¬× : {a b : Set ℓ} → ¬ a ⊎ ¬ b → ¬ (a × b)
 ¬⊎¬→¬× (inj₁ ¬a) (a , b) = ¬a a

@@ -35,7 +35,7 @@ MP : {w : W} → {a b : modal F} →
 MP ⊩a→b ⊩a = ⊩a→b ⊩a
 
 ------------------------------------------------------------------------
--- Axioms of constructive logic
+-- Axioms of intuitionistic logic
 
 ⊩∧-intro : {a b : modal F} → 𝔐 , w ⊩ a ⇒ b ⇒ a ∧ b
 ⊩∧-intro ⊩a ⊩b f = f ⊩a ⊩b
@@ -106,7 +106,7 @@ _⊩∘_ g f ⊩a = g (f ⊩a)
 ¬□⇔◇¬ : {a : modal F} → 𝔐 , w ⊩ `¬ □ a ⇔ ◇ `¬ a
 ¬□⇔◇¬ {𝔐 = 𝔐} {a = a} = ⊩⇔← 𝔐 (`¬ □ a) (◇ `¬ a)
   ( (λ f f¬¬ → f λ v w↝v → DNE _ (f¬¬ v w↝v))
-  , λ ¬f¬¬ f → ¬f¬¬ λ v w↝v → DNI _ (f v w↝v)
+  , (λ ¬f¬¬ f → ¬f¬¬ λ v w↝v → DNI _ (f v w↝v))
   )
 
 ¬◇⇔□¬ : {a : modal F} → 𝔐 , w ⊩ `¬ ◇ a ⇔ □ `¬ a

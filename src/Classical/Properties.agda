@@ -25,7 +25,7 @@ classical-→ f | inj₁ a = inj₂ (f a)
 classical-→ f | inj₂ ¬a = inj₁ ¬a
 
 -----------------------------------------------------------------------
--- 1 out of 4 De Morgan laws does not hold in constructive logic
+-- 1 out of 4 De Morgan laws does not hold in intuitionistic logic
 
 classical-¬×→¬⊎¬ : {a b : Set ℓ} → ¬ (a × b) → ¬ a ⊎ ¬ b
 classical-¬×→¬⊎¬ {a = a} {b = b} f with LEM a
@@ -42,14 +42,14 @@ classical-¬→ {a = a} {b = b} f = DNE _ λ ¬× →
 -----------------------------------------------------------------------
 -- Quantifier juggling
 --
--- (  ∃ x .   P x) → (¬ ∀ x . ¬ P x) : constructive
+-- (  ∃ x .   P x) → (¬ ∀ x . ¬ P x) : intuitionistic
 -- (¬ ∀ x . ¬ P x) → (  ∃ x .   P x) : classical
--- (¬ ∃ x .   P x) → (  ∀ x . ¬ P x) : constructive
--- (  ∀ x . ¬ P x) → (¬ ∃ x .   P x) : constructive
--- (  ∃ x . ¬ P x) → (¬ ∀ x .   P x) : constructive
+-- (¬ ∃ x .   P x) → (  ∀ x . ¬ P x) : intuitionistic
+-- (  ∀ x . ¬ P x) → (¬ ∃ x .   P x) : intuitionistic
+-- (  ∃ x . ¬ P x) → (¬ ∀ x .   P x) : intuitionistic
 -- (¬ ∀ x .   P x) → (  ∃ x . ¬ P x) : classical
 -- (¬ ∃ x . ¬ P x) → (  ∀ x .   P x) : classical
--- (  ∀ x .   P x) → (¬ ∃ x . ¬ P x) : constructive
+-- (  ∀ x .   P x) → (¬ ∃ x . ¬ P x) : intuitionistic
 
 module _ {P : Pred A p} where
 
