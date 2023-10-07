@@ -48,6 +48,22 @@ _,_⊩_ : {W F : Set} → KripkeModel W F → W → modal F → Set
 𝔐 , w ⊩ f ⇒ g  = (𝔐 , w ⊩ f) → (𝔐 , w ⊩ g)
 𝔐 , w ⊩ □ f    = ∀ v → KripkeModel.accesses 𝔐 w v → 𝔐 , v ⊩ f
 
+-----------------------------------------------------------------------
+-- A Kripke model forces a propositional formula iff it is forced in every world
+
+infix 2 _,⊩_
+
+_,⊩_ : {W F : Set} → KripkeModel W F → modal F → Set _
+𝔐 ,⊩ p = ∀ w → 𝔐 , w ⊩ p
+
+-----------------------------------------------------------------------
+-- A propositional formula is a tautology iff every Kripke model forces it
+
+infix 2 ⊨_
+
+⊨_ : {F : Set} → modal F → Set _
+⊨_ {F = F} p = ∀ {W : Set} (𝔐 : KripkeModel W F) → 𝔐 ,⊩ p
+
 {-
 
 -----------------------------------------------------------------------

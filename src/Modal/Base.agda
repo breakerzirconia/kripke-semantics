@@ -15,12 +15,12 @@ open import Extras
 open import Kripke.Semantics
 
 -----------------------------------------------------------------------
--- Re-exporting the core definitions.
+-- Re-exporting the core definitions
 
 open import Modal.Core public
 
 -----------------------------------------------------------------------
--- Equivalent statements for conjunction.
+-- Equivalent statements for conjunction
 
 ⊩∧→ : {W F : Set} → (𝔐 : KripkeModel W F) → {w : W} → (a b : modal F) →
      (𝔐 , w ⊩ a ∧ b) → (𝔐 , w ⊩ a) × (𝔐 , w ⊩ b)
@@ -36,7 +36,7 @@ open import Modal.Core public
 ⊩∧ 𝔐 a b = ⊩∧→ 𝔐 a b , ⊩∧← 𝔐 a b
 
 -----------------------------------------------------------------------
--- Equivalent statements for disjunction.
+-- Equivalent statements for disjunction
 
 ⊩∨→ : {W F : Set} → (𝔐 : KripkeModel W F) → {w : W} → (a b : modal F) →
      (𝔐 , w ⊩ a ∨ b) → (𝔐 , w ⊩ a) ⊎ (𝔐 , w ⊩ b)
@@ -52,7 +52,7 @@ open import Modal.Core public
 ⊩∨ 𝔐 a b = ⊩∨→ 𝔐 a b , ⊩∨← 𝔐 a b
 
 -----------------------------------------------------------------------
--- Equivalent statements for the biconditional.
+-- Equivalent statements for the biconditional
 
 ⊩⇔→ : {W F : Set} → (𝔐 : KripkeModel W F) → {w : W} → (a b : modal F) →
      (𝔐 , w ⊩ a ⇔ b) → ((𝔐 , w ⊩ a) ↔ (𝔐 , w ⊩ b))
@@ -67,7 +67,7 @@ open import Modal.Core public
 ⊩⇔ 𝔐 a b = ⊩⇔→ 𝔐 a b , ⊩⇔← 𝔐 a b
 
 -----------------------------------------------------------------------
--- Equivalent statements for the possibility modality.
+-- Equivalent statements for the possibility modality
 
 ⊩◇→ : {W F : Set} → (𝔐 : KripkeModel W F) → {w : W} → (a : modal F) →
       (𝔐 , w ⊩ ◇ a) → ∃[ v ] (KripkeModel.accesses 𝔐 w v) × (𝔐 , v ⊩ a)
